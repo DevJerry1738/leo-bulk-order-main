@@ -12,7 +12,7 @@ import { formatCurrency } from "@/lib/format";
 import { getErrorMessage } from "@/lib/error-handler";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ChevronRight, Check } from "lucide-react";
+import { ChevronRight, Check, Copy } from "lucide-react";
 import DiscountCodeInput from "@/components/DiscountCodeInput";
 
 const schema = z.object({
@@ -38,6 +38,16 @@ export default function Checkout() {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [appliedCodeId, setAppliedCodeId] = useState<string | null>(null);
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [copiedField, setCopiedField] = useState<"bank" | "account" | null>(null);
+
+  const handleCopy = (text: string, field: "bank" | "account") => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    toast.success(`${field === "bank" ? "Bank Name" : "Account Number"} copied to clipboard!`);
+    setTimeout(() => {
+      setCopiedField(null);
+    }, 2000);
+  };
 
   useEffect(() => {
     if (itemCount === 0) navigate("/cart");
@@ -273,14 +283,43 @@ export default function Checkout() {
                   {/* Bank Details Section */}
                   <div className="space-y-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <Label className="text-base font-semibold block">Transfer Details</Label>
-                    <div className="space-y-2">
-                      <div>
-                        <div className="text-xs text-blue-700 font-semibold uppercase">Bank Name</div>
-                        <div className="text-sm font-medium">{import.meta.env.VITE_BANK_NAME || "Bank Name"}</div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center group/bank border-b border-blue-100/50 pb-2">
+                        <div>
+                          <div className="text-xs text-blue-700 font-semibold uppercase">Bank Name</div>
+                          <div className="text-sm font-medium text-slate-800">{import.meta.env.VITE_BANK_NAME || "First Bank"}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(import.meta.env.VITE_BANK_NAME || "First Bank", "bank")}
+                          className="p-1.5 rounded-md hover:bg-blue-200/50 text-blue-700 hover:text-blue-800 transition-colors"
+                          title="Copy Bank Name"
+                        >
+                          {copiedField === "bank" ? (
+                            <Check className="h-4 w-4 text-green-600 animate-in zoom-in duration-150" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
-                      <div>
-                        <div className="text-xs text-blue-700 font-semibold uppercase">Account Number</div>
-                        <div className="text-sm font-mono font-medium">{import.meta.env.VITE_BANK_ACCOUNT_NUMBER || "Account Number"}</div>
+
+                      <div className="flex justify-between items-center group/account">
+                        <div>
+                          <div className="text-xs text-blue-700 font-semibold uppercase">Account Number</div>
+                          <div className="text-sm font-mono font-medium text-slate-800">{import.meta.env.VITE_BANK_ACCOUNT_NUMBER || "1234567890"}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(import.meta.env.VITE_BANK_ACCOUNT_NUMBER || "1234567890", "account")}
+                          className="p-1.5 rounded-md hover:bg-blue-200/50 text-blue-700 hover:text-blue-800 transition-colors"
+                          title="Copy Account Number"
+                        >
+                          {copiedField === "account" ? (
+                            <Check className="h-4 w-4 text-green-600 animate-in zoom-in duration-150" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
                     </div>
                     <p className="text-xs text-blue-700 border-t pt-2">

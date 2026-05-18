@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Sparkles } from "lucide-react";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -96,10 +97,25 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-accent/30 to-background p-4">
       <Card className="w-full max-w-sm shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">
-            <span className="text-primary">Leo</span> Wholesale
-          </CardTitle>
+        <CardHeader className="text-center flex flex-col items-center">
+          <div className="flex items-center gap-2.5 select-none mb-2">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-tr from-primary to-rose-500 shadow-md shadow-primary/20">
+              <Sparkles className="w-4.5 h-4.5 text-white animate-pulse" />
+            </div>
+            <div className="flex flex-col leading-none text-left">
+              <div className="flex items-baseline gap-1">
+                <span className="font-extrabold tracking-tight text-xl bg-gradient-to-r from-primary via-rose-500 to-rose-600 bg-clip-text text-transparent uppercase font-sans">
+                  Leo
+                </span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+                  Cosmetics
+                </span>
+              </div>
+              <span className="text-[9px] font-medium text-muted-foreground tracking-[0.2em] uppercase leading-none mt-0.5">
+                Wholesale
+              </span>
+            </div>
+          </div>
           <CardDescription>Sign in or create an account to place your order</CardDescription>
         </CardHeader>
         <CardContent>
@@ -184,7 +200,7 @@ export default function AuthPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">Phone Number (WhatsApp)</Label>
                   <Input
                     id="phone"
                     type="tel"

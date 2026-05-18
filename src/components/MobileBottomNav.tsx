@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Package, ShoppingCart, ClipboardList, BarChart3, Box, Tag } from "lucide-react";
+import { Package, ShoppingCart, ClipboardList, BarChart3, Box, Tag, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ const userNavItems = [
   { path: "/", label: "Products", icon: Package, end: true },
   { path: "/cart", label: "Cart", icon: ShoppingCart, badge: true, end: true },
   { path: "/orders", label: "Orders", icon: ClipboardList, end: true },
+  { path: "/profile", label: "Profile", icon: User, end: true },
 ];
 
 const adminNavItems = [

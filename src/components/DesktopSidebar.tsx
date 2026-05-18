@@ -1,19 +1,22 @@
 import { NavLink } from "react-router-dom";
-import { Package, ClipboardList, Box, Users, BarChart3, Tag } from "lucide-react";
+import { Package, ClipboardList, Box, Users, BarChart3, Tag, Flame, TrendingUp, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
-  { path: "/", label: "Products", icon: Package, adminOnly: false, end: true },
-  { path: "/orders", label: "Orders", icon: ClipboardList, adminOnly: false, end: true },
+  { path: "/", label: "Shop Products", icon: Package, adminOnly: false, end: true },
+  { path: "/trends", label: "Market Trends", icon: Flame, adminOnly: false, end: true },
+  { path: "/orders", label: "My Orders", icon: ClipboardList, adminOnly: false, end: true },
+  { path: "/profile", label: "My Profile", icon: User, adminOnly: false, end: true },
 ];
 
 const adminItems = [
   { path: "/admin", label: "Dashboard", icon: BarChart3, adminOnly: true, end: true },
-  { path: "/admin/products", label: "Products", icon: Box, adminOnly: true, end: true },
-  { path: "/admin/orders", label: "Orders", icon: Users, adminOnly: true, end: true },
-  { path: "/admin/pricing", label: "Pricing", icon: Tag, adminOnly: true, end: true },
+  { path: "/admin/analytics", label: "Analytics", icon: TrendingUp, adminOnly: true, end: true },
+  { path: "/admin/products", label: "Manage Products", icon: Box, adminOnly: true, end: true },
+  { path: "/admin/orders", label: "Manage Orders", icon: Users, adminOnly: true, end: true },
+  { path: "/admin/pricing", label: "Bulk Pricing", icon: Tag, adminOnly: true, end: true },
 ];
 
 export default function DesktopSidebar() {

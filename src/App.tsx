@@ -9,6 +9,8 @@ import Layout from "@/components/Layout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AuthPage from "./pages/Auth";
 import Products from "./pages/Products";
+import Trends from "./pages/Trends";
+import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
@@ -16,6 +18,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminPricing from "./pages/admin/AdminPricing";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +41,8 @@ const App = () => (
                 }
               >
                 <Route path="/" element={<Products />} />
+                <Route path="/trends" element={<Trends />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />
@@ -62,6 +67,14 @@ const App = () => (
                   element={
                     <ProtectedRoute adminOnly>
                       <AdminPricing />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/analytics"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminAnalytics />
                     </ProtectedRoute>
                   }
                 />

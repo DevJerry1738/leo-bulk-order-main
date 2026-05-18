@@ -22,6 +22,7 @@ interface Product {
   sku: string | null;
   price: number;
   stock: number;
+  hasPricingTiers?: boolean;
 }
 
 export default function Products() {
@@ -35,7 +36,7 @@ export default function Products() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["products", debouncedSearch, page],
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
     queryFn: async () => {
       let query = supabase
         .from("products")
@@ -49,9 +50,25 @@ export default function Products() {
 
       query = query.order("name").range((page - 1) * pageSize, page * pageSize - 1);
 
-      const { data, error, count } = await query;
+      const { data: productsData, error, count } = await query;
       if (error) throw error;
-      return { products: data as Product[], totalCount: count || 0 };
+
+      const products = (productsData as Product[]) || [];
+      const productIds = products.map((p) => p.id);
+
+      if (productIds.length > 0) {
+        const { data: tiersData } = await supabase
+          .from("pricing_tiers" as any)
+          .select("product_id")
+          .in("product_id", productIds);
+
+        const activeTiersSet = new Set(tiersData?.map((t: any) => t.product_id) || []);
+        products.forEach((p) => {
+          p.hasPricingTiers = activeTiersSet.has(p.id);
+        });
+      }
+
+      return { products, totalCount: count || 0 };
     },
   });
 
@@ -96,18 +113,18 @@ export default function Products() {
     <div className="flex gap-6">
       {/* Main Content */}
       <div className="flex-1 space-y-4 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+        <div className="space-y-3">
           <div>
             <h1 className="text-2xl font-bold">Products</h1>
             <p className="text-sm text-muted-foreground">Browse and add items to your cart.</p>
           </div>
-          <div className="relative w-full sm:w-64">
+          <div className="relative w-full">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search name, SKU…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 w-full"
             />
           </div>
         </div>
@@ -135,18 +152,24 @@ export default function Products() {
                 ) : (
                   products.map((p) => {
                     const qty = items[p.id]?.quantity ?? 0;
-                    const isExpanded = expandedProductId === p.id;
+                    const isExpanded = expandedProductId === p.id && p.hasPricingTiers;
                     return [
                       <tr key={`row-${p.id}`} className="border-b hover:bg-muted/30 transition-colors">
                         <td className="px-3 py-2">
-                          <button
-                            onClick={() => setExpandedProductId(isExpanded ? null : p.id)}
-                            className="inline-flex items-center gap-1 font-medium hover:text-primary transition-colors"
-                          >
-                            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                            {p.name}
-                          </button>
-                          <div className="text-xs text-muted-foreground sm:hidden">
+                          {p.hasPricingTiers ? (
+                            <button
+                              onClick={() => setExpandedProductId(isExpanded ? null : p.id)}
+                              className="inline-flex items-center gap-1 font-medium text-left hover:text-primary transition-colors"
+                            >
+                              <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                              {p.name}
+                            </button>
+                          ) : (
+                            <span className="font-medium text-foreground pl-5 inline-block">
+                              {p.name}
+                            </span>
+                          )}
+                          <div className="text-xs text-muted-foreground sm:hidden pl-5">
                             {[p.variant, p.size, p.sku].filter(Boolean).join(" · ")}
                           </div>
                         </td>
